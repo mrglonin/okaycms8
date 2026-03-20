@@ -6,7 +6,7 @@
 
 - Ядро CMS адаптировано под PHP 8.5.
 - `vendor` обновлён до актуальных версий через `composer.lock`.
-- Фронт, ключевая админка, AJAX и POST-сценарии проверены smoke-тестами.
+- Фронт, ключевая админка, AJAX и POST-сценарии адаптированы под PHP 8.5.
 - В админке усилена защита POST-действий по `session_id`.
 - Страница `SystemAdmin` расширена системной информацией о runtime, правах и Composer-пакетах.
 
@@ -24,7 +24,6 @@
 - Совместимость ядра с новыми API библиотек и с PHP 8.5.
 - Совместимость старого кода с новыми namespaced-классами через слой в `Okay/Core/compat/vendor_compat.php`.
 - Исправления работы БД, query builder, Smarty, телефонов, переводов, bootstrap-файлов и админских обработчиков.
-- Новые smoke-скрипты для быстрой регресс-проверки после деплоя.
 
 ## Требования
 
@@ -70,45 +69,12 @@ php ok database:deploy
 - Все локальные переопределения должны лежать в `config/config.local.php`.
 - Для локальной отладки можно включать `debug_mode=true` только в `config/config.local.php`, не меняя базовый конфиг.
 
-## Smoke-проверки
-
-После обновления PHP, зависимостей или перед релизом выполняйте оба скрипта:
-
-```bash
-php tools/php85_smoke_routes.php http://okaycms.local 1
-php tools/php85_smoke_scenarios.php http://okaycms.local
-```
-
-Что проверяет `tools/php85_smoke_routes.php`:
-
-- статические публичные маршруты
-- коллекции брендов, статей и товаров
-- динамические URL категорий, брендов, товаров, страниц, авторов и блога
-- ожидаемые редиректы на закрытые пользовательские разделы считаются корректным поведением
-
-Что проверяет `tools/php85_smoke_scenarios.php`:
-
-- регистрация пользователя
-- логин и logout
-- password remind
-- subscribe AJAX
-- feedback form
-- cart AJAX
-- wishlist AJAX
-- comparison AJAX
-- checkout
-- admin save-actions
-- upload favicon
-- блокировку POST без корректного `session_id`
-
 ## Ключевые файлы релиза
 
 - `composer.json` и `composer.lock` — обновлённый dependency stack
 - `Okay/Core/compat/vendor_compat.php` — backward-compat слой для новых vendor API
 - `index.php` и `backend/index.php` — обновлённый bootstrap под PHP 8.5
 - `backend/Controllers/SystemAdmin.php` и `backend/design/html/settings_system.tpl` — расширенная системная информация
-- `tools/php85_smoke_routes.php` — smoke по URL-слою
-- `tools/php85_smoke_scenarios.php` — smoke по реальным пользовательским и админским сценариям
 
 ## Проверенный результат
 
@@ -117,11 +83,11 @@ php tools/php85_smoke_scenarios.php http://okaycms.local
 - публичные маршруты отвечают корректно
 - ключевые страницы админки открываются без fatal/warning
 - фронтовые и админские POST/AJAX-сценарии проходят успешно
-- `php-fpm` лог после smoke-прогонов остаётся чистым
+- `php-fpm` лог после проверки остаётся чистым
 
 ## Ограничения текущего покрытия
 
-Smoke-прогоны покрывают основной storefront и ключевую админку, но не заменяют полный QA. Отдельно стоит прогонять:
+Базовая проверка покрывает основной storefront и ключевую админку, но не заменяет полный QA. Отдельно стоит прогонять:
 
 - cron/cli задачи
 - импорт и экспорт
