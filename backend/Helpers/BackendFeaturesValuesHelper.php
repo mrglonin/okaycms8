@@ -458,7 +458,9 @@ class BackendFeaturesValuesHelper
         ->groupBy(['lfv_inner.lang_id, fv_inner.feature_id, lfv_inner.translit'])
         ->having('COUNT(*) > 1');
 
-        $query->where(' (lfv_inner.lang_id, fv_inner.feature_id, lfv_inner.translit) IN (?)', $subQuery);
+        $query->where(
+            ' (lfv_inner.lang_id, fv_inner.feature_id, lfv_inner.translit) IN (' . $subQuery->getStatement() . ')'
+        );
 
         $query->orderBy(['lang_id', 'feature_id', 'translit', 'feature_value_id', 'translit']);
 

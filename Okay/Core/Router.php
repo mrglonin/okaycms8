@@ -551,7 +551,7 @@ class Router {
         if (!empty($routeVars)) {
             foreach ($routeVars as $key => $routeVar) {
                 $param = $routeParams[$key] ?? null;
-                $param = strip_tags(htmlspecialchars($param));
+                $param = ($param !== null ? strip_tags(htmlspecialchars((string) $param)) : null);
                 
                 $allParams[$routeVar] = (empty($param) && !empty($defaults['{$' . $routeVar . '}']) ? $defaults['{$' . $routeVar . '}'] : $param);
             }

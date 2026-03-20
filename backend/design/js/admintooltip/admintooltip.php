@@ -18,6 +18,7 @@ if (!empty($_SERVER['HTTP_USER_AGENT'])){
 
 session_start();
 require_once('vendor/autoload.php');
+require_once('Okay/Core/compat/vendor_compat.php');
 
 $DI = include 'Okay/Core/config/container.php';
 
@@ -48,12 +49,15 @@ $response->addHeader('Cache-Control: no-cache, must-revalidate');
 $response->addHeader('Expires: -1');
 $response->addHeader('Pragma: no-cache');
 
-$manager = $DI->get(EntityFactory::class)->get(ManagersEntity::class)->get($_SESSION['admin']);
+$adminLogin = $_SESSION['admin'] ?? null;
+$manager = !empty($adminLogin)
+    ? $DI->get(EntityFactory::class)->get(ManagersEntity::class)->get($adminLogin)
+    : null;
 
 /** @var Design $design */
 $design = $DI->get(Design::class);
 
-if (empty($manager->id)) {
+if (empty($manager) || empty($manager->id)) {
     print "not admin :(";
     exit;
 }
@@ -65,9 +69,9 @@ $design->setCompiledDir('backend/design/compiled');
 $backendTranslations = $DI->get(BackendTranslations::class);
 $backendTranslations->initTranslations($manager->lang);
 $design->assign('btr', $backendTranslations);
-$language = $manager = $DI->get(EntityFactory::class)->get(LanguagesEntity::class)->get((string)$manager->lang);
+$language = $DI->get(EntityFactory::class)->get(LanguagesEntity::class)->get((string) $manager->lang);
 $design->assign('language', $language);
-$design->assign('front_lang_id', $_SESSION['lang_id'] ?? (string)$manager->lang->id);
+$design->assign('front_lang_id', $_SESSION['lang_id'] ?? ($language->id ?? null));
 
 $menuSelector = [];
 $fastMenu = $managerMenu->getFastMenu();

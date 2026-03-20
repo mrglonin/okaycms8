@@ -53,7 +53,7 @@ class ManagersEntity extends Entity
     {
         $managerCore = $this->serviceLocator->getService(\Okay\Core\Managers::class);
         if ($manager = parent::get($id)) {
-            $manager->menu = unserialize($manager->menu);
+            $manager->menu = !empty($manager->menu) ? unserialize($manager->menu) : [];
 
             $managerCore->setManagerPermissions($manager);
             return ExtenderFacade::execute([static::class, __FUNCTION__], $manager, func_get_args());

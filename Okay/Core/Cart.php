@@ -102,6 +102,24 @@ class Cart
     public $discounts = [];
 
     /**
+     * @var array
+     * Prepared purchases for order persistence
+     */
+    public array $purchasesToDB = [];
+
+    /**
+     * @var array
+     * Prepared discounts for order persistence
+     */
+    public array $discountsToDB = [];
+
+    /**
+     * @var array
+     * Prepared translated discounts for order persistence
+     */
+    public array $langDiscountsToDB = [];
+
+    /**
      * @var bool
      * Whether the cart is currently empty
      */

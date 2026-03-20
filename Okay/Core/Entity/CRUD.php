@@ -200,7 +200,7 @@ trait CRUD
                 continue;
             }
 
-            if (strtolower($value) == 'now()') {
+            if (is_string($value) && strtolower($value) == 'now()') {
                 $update->set($field, $value);
                 unset($object->$field);
                 $funcAsData = true;

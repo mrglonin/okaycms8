@@ -51,7 +51,7 @@ class Database
         $this->dbParams     = (object)$dbParams;
         $this->queryFactory = $queryFactory;
 
-        $this->pdo->connect();
+        $this->pdo->lazyConnect();
 
         if (!empty($this->dbParams->db_names)) {
             $sql = $this->queryFactory->newSqlQuery();
@@ -109,7 +109,7 @@ class Database
                     print 'Error in query' . PHP_EOL . PHP_EOL;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $log = 'Sql query error: "' . $e->getMessage() . '"' . PHP_EOL;
             $log .= 'Query trace:' . PHP_EOL;
             $trace = $e->getTrace();
@@ -216,7 +216,7 @@ class Database
         $this->result->setFetchMode(ExtendedPdo::FETCH_OBJ);
         
         foreach ($this->result->fetchAll() as $row) {
-            if (property_exists($row, $mapped)) {
+            if (!empty($mapped) && property_exists($row, $mapped)) {
                 $mappedValue = $row->$mapped;
             } elseif (!empty($mapped)) {
                 throw new \Exception("Field named \"{$mapped}\" uses for mapped is not exists");

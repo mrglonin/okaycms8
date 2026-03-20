@@ -176,7 +176,6 @@ class IndexAdmin
             curl_setopt($ch, CURLOPT_TIMEOUT, 10);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
             $versionData = curl_exec($ch);
-            curl_close($ch);
             
             if ($versionData) {
                 $versionData = json_decode($versionData, true);
@@ -214,7 +213,7 @@ class IndexAdmin
             $menu = $managerMenu->getMenu($this->manager);
             $activeControllerName = $managerMenu->getActiveControllerName($this->manager, $this->backendController);
             $design->assign('left_menu', $menu);
-            $design->assign('menu_selected', $activeControllerName);
+            $design->assign('menu_selected', (string) ($activeControllerName ?? ''));
             
             if (!empty($menu)) {
                 $subMenu = reset($menu);

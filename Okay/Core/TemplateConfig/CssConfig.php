@@ -326,13 +326,26 @@ class CssConfig
             $oCssDocument = $oCssParser->parse();
             foreach ($oCssDocument->getAllRuleSets() as $oBlock) {
                 foreach ($oBlock->getRules() as $r) {
-                    $css_value = (string)$r->getValue();
+                    $css_value = $this->renderCssValue($r->getValue());
                     if (strpos($r->getRule(), '--') === 0) {
                         $this->cssVariables[$r->getRule()] = $css_value;
                     }
                 }
             }
         }
+    }
+
+    private function renderCssValue($value)
+    {
+        if (is_string($value) || is_numeric($value)) {
+            return (string) $value;
+        }
+
+        if (is_object($value) && method_exists($value, 'render')) {
+            return $value->render(OutputFormat::createCompact());
+        }
+
+        return (string) $value;
     }
     
     /**

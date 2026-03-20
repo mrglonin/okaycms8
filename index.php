@@ -14,6 +14,7 @@ use Psr\Log\LoggerInterface;
 ini_set('display_errors', 'off');
 
 require_once('vendor/autoload.php');
+require_once('Okay/Core/compat/vendor_compat.php');
 
 if (!empty($_SERVER['HTTP_USER_AGENT'])) {
     session_name(md5($_SERVER['HTTP_USER_AGENT']));
@@ -45,7 +46,7 @@ try {
 
     if ($config->get('debug_mode') == true) {
         ini_set('display_errors', 'on');
-        error_reporting(E_ALL);
+        error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
     }
     
     /** @var Response $response */
@@ -86,7 +87,7 @@ try {
         print "-->";
     }
 
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     
     /** @var LoggerInterface $logger */
     $logger = $DI->get(LoggerInterface::class);

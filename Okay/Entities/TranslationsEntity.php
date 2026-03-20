@@ -39,6 +39,9 @@ class TranslationsEntity extends Entity
     /** @var array all translations */
     private $vars = [];
 
+    /** @var bool */
+    private $templateOnly = false;
+
     public function __construct()
     {
         parent::__construct();

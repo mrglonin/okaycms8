@@ -20,6 +20,7 @@ use Okay\Core\Modules\Modules;
 use Okay\Core\BackendTranslations;
 
 require_once('vendor/autoload.php');
+require_once('Okay/Core/compat/vendor_compat.php');
 $DI = include 'Okay/Core/config/container.php';
 
 /** @var Config $config */
@@ -53,10 +54,11 @@ $managers = $DI->get(Managers::class);
 /** @var ManagersEntity $managersEntity */
 $managersEntity = $entityFactory->get(ManagersEntity::class);
 
-$manager = $managersEntity->get($_SESSION['admin']);
-
-$backendTranslations->initTranslations($manager->lang);
+$adminLogin = $_SESSION['admin'] ?? null;
+$manager = !empty($adminLogin) ? $managersEntity->get($adminLogin) : null;
 
 if (!$manager) {
     trigger_error('Need to login', E_USER_ERROR); // todo 403
 }
+
+$backendTranslations->initTranslations($manager->lang);

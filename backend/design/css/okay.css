@@ -7822,6 +7822,146 @@ div.tox-fullscreen {
     min-height: 50px;
     text-align: left;
 }
+.system_config_box{
+    padding: 18px 20px 20px;
+}
+.system_config_intro{
+    margin-bottom: 16px;
+    color: #5d6472;
+    font-size: 13px;
+}
+.system_config_intro code{
+    margin-left: 8px;
+    color: #2b303b;
+}
+.system_config_grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+}
+.system_config_option{
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 16px;
+    border: 1px solid #e6e9ef;
+    border-radius: 4px;
+    background-color: #fafbfc;
+}
+.system_config_option__content{
+    min-width: 0;
+}
+.system_config_option__title{
+    color: #2b303b;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+.system_config_option__hint{
+    color: #7b8391;
+    font-size: 12px;
+    line-height: 1.45;
+}
+.system_config_option__switch{
+    flex: 0 0 auto;
+    padding-top: 2px;
+}
+.system_config_footer{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 16px;
+}
+.system_config_footer__note{
+    color: #7b8391;
+    font-size: 12px;
+    line-height: 1.45;
+}
+@media (max-width: 767px){
+    .system_config_box{
+        padding: 16px;
+    }
+    .system_config_option{
+        padding: 12px 14px;
+    }
+    .system_config_footer{
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+.system_matrix_wrap{
+    overflow-x: auto;
+}
+.system_matrix{
+    min-width: 100%;
+    border: 1px solid #d9dde5;
+    background-color: #fff;
+}
+.system_matrix--paths{
+    min-width: 760px;
+}
+.system_matrix--packages{
+    min-width: 980px;
+}
+.system_matrix__head,
+.system_matrix__row{
+    display: grid;
+    align-items: stretch;
+}
+.system_matrix--paths .system_matrix__head,
+.system_matrix--paths .system_matrix__row{
+    grid-template-columns: minmax(180px, 1.1fr) minmax(420px, 3fr) 120px;
+}
+.system_matrix--packages .system_matrix__head,
+.system_matrix--packages .system_matrix__row{
+    grid-template-columns: minmax(250px, 2fr) minmax(180px, 1fr) minmax(180px, 1fr) minmax(140px, 1fr);
+}
+.system_matrix__head{
+    background: #f4f6fa;
+    color: #2b303b;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+.system_matrix__row{
+    color: #2b303b;
+}
+.system_matrix__row:nth-child(even){
+    background-color: #fafbfc;
+}
+.system_matrix__cell{
+    padding: 12px 14px;
+    border-top: 1px solid #e6e9ef;
+    word-break: break-word;
+}
+.system_matrix__head .system_matrix__cell{
+    border-top: none;
+}
+.system_matrix__label{
+    font-weight: 600;
+}
+.system_matrix__code code{
+    display: inline-block;
+    max-width: 100%;
+    padding: 0;
+    white-space: normal;
+    word-break: break-word;
+    color: #2b303b;
+    background: transparent;
+    border: none;
+    font-size: 13px;
+}
+.system_matrix__status{
+    font-weight: 600;
+}
+.system_matrix__status--positive{
+    color: #2b8a3e;
+}
+.system_matrix__status--negative{
+    color: #c92a2a;
+}
 .import_row{
     min-height: 35px
 }

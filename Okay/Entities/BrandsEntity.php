@@ -163,7 +163,8 @@ class BrandsEntity extends Entity
             ->groupBy(['pf.product_id'])
             ->having('COUNT(*) >=' . count($features));
         
-        $this->select->where('p.id IN (?)', $subQuery);
+        $this->select->where('p.id IN (' . $subQuery->getStatement() . ')');
+        $this->select->bindValues($subQuery->getBindValues());
     }
 
     public function add($brand)

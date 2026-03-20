@@ -83,6 +83,11 @@ class BackendSettingsHelper
      */
     private $imageCore;
 
+    /**
+     * @var LicenseModulesTemplates
+     */
+    private $licenseModulesTemplates;
+
     private $allowedImageExtensions = ['png', 'gif', 'jpg', 'jpeg', 'ico', 'svg'];
 
     public function __construct(
@@ -513,6 +518,7 @@ class BackendSettingsHelper
         $error = '';
         $siteLogoName = $this->settings->get('site_logo');
         $logoLang = '';
+        $siteLogoUpload = $_FILES['site_logo'] ?? null;
 
         $this->settings->set('iframe_map_code', $this->request->post('iframe_map_code'));
         $multiLangLogo = $this->request->post('multilang_logo', 'integer');
@@ -524,9 +530,9 @@ class BackendSettingsHelper
             $logoLang = '_' . $currentLang->label;
         }
 
-        if ($_FILES['site_logo']['error'] == UPLOAD_ERR_OK) {
-            $tmpName = $_FILES['site_logo']['tmp_name'];
-            $ext = pathinfo($_FILES['site_logo']['name'], PATHINFO_EXTENSION);
+        if (!empty($siteLogoUpload) && ($siteLogoUpload['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {
+            $tmpName = $siteLogoUpload['tmp_name'] ?? '';
+            $ext = pathinfo((string) ($siteLogoUpload['name'] ?? ''), PATHINFO_EXTENSION);
             $siteLogoName = 'logo' . $logoLang . '.' . $ext;
 
             if (in_array($ext, $this->allowedImageExtensions)) {
@@ -620,8 +626,12 @@ class BackendSettingsHelper
     {
         $designImagesDir = $this->config->get('root_dir') . '/' . $this->config->get('design_images');
         $multiLangLogo = $this->request->post('multilang_logo', 'integer');
+        $siteLogo = (string) $this->settings->get('site_logo');
 
-        unlink($designImagesDir . $this->settings->get('site_logo'));
+        if ($siteLogo !== '' && is_file($designImagesDir . $siteLogo)) {
+            @unlink($designImagesDir . $siteLogo);
+        }
+
         if ($multiLangLogo == 1) {
             $this->settings->update('site_logo', '');
         } else {

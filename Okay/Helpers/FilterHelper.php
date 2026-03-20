@@ -266,7 +266,7 @@ class FilterHelper
      * @param $filtersUrl
      * @return string|bool
      */
-    public function getCurrentPage(string $filtersUrl = null)
+    public function getCurrentPage(?string $filtersUrl = null)
     {
         if ($filtersUrl === null && ($filtersUrl = $this->getFiltersUrl()) === null) {
             return ExtenderFacade::execute(__METHOD__, false, func_get_args());
@@ -292,7 +292,7 @@ class FilterHelper
         return ExtenderFacade::execute(__METHOD__, $currentPage, func_get_args());
     }
 
-    public function getCurrentSort(string $filtersUrl = null)
+    public function getCurrentSort(?string $filtersUrl = null)
     {
         if ($filtersUrl === null && ($filtersUrl = $this->getFiltersUrl()) === null) {
             return ExtenderFacade::execute(__METHOD__, false, func_get_args());
@@ -317,7 +317,7 @@ class FilterHelper
         return ExtenderFacade::execute(__METHOD__, $currentSort, func_get_args());
     }
 
-    public function getCurrentOtherFilters(string $filtersUrl = null)
+    public function getCurrentOtherFilters(?string $filtersUrl = null)
     {
         if ($filtersUrl === null && ($filtersUrl = $this->getFiltersUrl()) === null) {
             return ExtenderFacade::execute(__METHOD__, false, func_get_args());
@@ -345,7 +345,7 @@ class FilterHelper
         return ExtenderFacade::execute(__METHOD__, $otherFilter, func_get_args());
     }
 
-    public function getCurrentBrands(string $filtersUrl = null)
+    public function getCurrentBrands(?string $filtersUrl = null)
     {
         if ($filtersUrl === null && ($filtersUrl = $this->getFiltersUrl()) === null) {
             return ExtenderFacade::execute(__METHOD__, false, func_get_args());
@@ -375,7 +375,7 @@ class FilterHelper
         return ExtenderFacade::execute(__METHOD__, $currentBrands, func_get_args());
     }
 
-    public function getCurrentPrices(string $filtersUrl = null)
+    public function getCurrentPrices(?string $filtersUrl = null)
     {
         if ($filtersUrl === null && ($filtersUrl = $this->getFiltersUrl()) === null) {
             return ExtenderFacade::execute(__METHOD__, false, func_get_args());
@@ -405,7 +405,7 @@ class FilterHelper
         return ExtenderFacade::execute(__METHOD__, ['brand', 'filter', 'price', 'page', 'sort'], func_get_args());
     }
 
-    public function getCurrentFeatures(string $filtersUrl = null)
+    public function getCurrentFeatures(?string $filtersUrl = null)
     {
         if ($filtersUrl === null && ($filtersUrl = $this->getFiltersUrl()) === null) {
             return ExtenderFacade::execute(__METHOD__, false, func_get_args());
@@ -976,7 +976,11 @@ class FilterHelper
     public function getKeyword(): ?string
     {
         $keyword = $this->request->get('keyword', null, null, false);
-        if ($keyword = strip_tags($keyword)) {
+        if ($keyword !== null) {
+            $keyword = strip_tags((string) $keyword);
+        }
+
+        if ($keyword !== '') {
             $result = $keyword;
         } else {
             $result = null;

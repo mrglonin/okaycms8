@@ -3,6 +3,7 @@
 use Okay\Core\Request;
 
 require_once(dirname(__DIR__, 5) . '/vendor/autoload.php');
+require_once(dirname(__DIR__, 5) . '/Okay/Core/compat/vendor_compat.php');
 
 $version = "9.14.0";
 if (session_status() === PHP_SESSION_NONE) {

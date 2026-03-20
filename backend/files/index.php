@@ -13,6 +13,7 @@ session_start();
 chdir('../..');
 
 require_once('vendor/autoload.php');
+require_once('Okay/Core/compat/vendor_compat.php');
 
 $DI = include 'Okay/Core/config/container.php';
 
@@ -30,7 +31,9 @@ $entityFactory = $DI->get(EntityFactory::class);
 
 /** @var ManagersEntity $managersEntity */
 $managersEntity = $entityFactory->get(ManagersEntity::class);
-$manager = $managersEntity->get($_SESSION['admin']);
+
+$adminLogin = $_SESSION['admin'] ?? null;
+$manager = !empty($adminLogin) ? $managersEntity->get($adminLogin) : null;
 
 if (empty($manager)) {
     exit();

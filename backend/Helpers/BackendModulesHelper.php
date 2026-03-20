@@ -192,7 +192,6 @@ class BackendModulesHelper
         }
         $_SESSION['modules_request_timeout_try_cnt'] = $retryCnt;
 
-        curl_close($ch);
         return $result;
     }
     
@@ -216,7 +215,6 @@ class BackendModulesHelper
 
         $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         
-        curl_close($ch);
         fclose($fp);
         
         if ($statusCode == 200) {

@@ -93,6 +93,11 @@ class SqlQuery implements QueryInterface
         return $this->bindValues;
     }
 
+    public function resetFlags()
+    {
+        return $this;
+    }
+
     public function getStatement()
     {
         return $this->statement;

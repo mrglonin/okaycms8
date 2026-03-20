@@ -24,6 +24,7 @@ ini_set('display_errors', 'off');
 chdir('..');
 
 require_once('vendor/autoload.php');
+require_once('Okay/Core/compat/vendor_compat.php');
 
 $DI = include 'Okay/Core/config/container.php';
 
@@ -46,7 +47,7 @@ $_SESSION['id'] = session_id();
 
 if ($config->get('debug_mode') == true) {
     ini_set('display_errors', 'on');
-    error_reporting(E_ALL);
+    error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
 }
 
 /** @var Request $request */
@@ -129,6 +130,14 @@ $routeParams = explode('@', $backendControllerName, 2);
 $backendControllerName = $routeParams[0];
 $methodName = (!empty($routeParams[1]) ? $routeParams[1] : 'fetch');
 
+$backendControllerAliases = [
+    'SettingsOpenAIAdmin' => 'SettingsOpenAiAdmin',
+];
+
+if (isset($backendControllerAliases[$backendControllerName])) {
+    $backendControllerName = $backendControllerAliases[$backendControllerName];
+}
+
 $manager = null;
 if (!empty($_SESSION['admin'])) {
     $manager = $managersEntity->get($_SESSION['admin']);
@@ -197,6 +206,24 @@ if (($controllerParams = $module->getBackendControllerParams($backendControllerN
     }
 }
 
+$invalidPostSession = false;
+if ($request->isPost() && !$request->checkSession()) {
+    $invalidPostSession = true;
+    $_FILES = [];
+}
+
+if ($invalidPostSession && $methodName !== 'fetch') {
+    $response
+        ->setStatusCode(403)
+        ->setContent(json_encode(['error' => 'Session expired'], JSON_UNESCAPED_SLASHES), RESPONSE_JSON)
+        ->sendContent();
+    exit;
+}
+
+if ($invalidPostSession) {
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+}
+
 $backend = new $controllerName($manager, $backendControllerName, $methodName);
 
 $access = call_user_func_array([$backend, 'onInit'], getMethodParams($backend, 'onInit'));
@@ -229,12 +256,6 @@ function getMethodParams($controllerName, $methodName)
     }
 
     return $methodParams;
-}
-
-// Проверка сессии для защиты от xss
-if (!$request->checkSession()) {
-    unset($_POST);
-    trigger_error('Session expired', E_USER_WARNING);
 }
 
 $response->sendContent();

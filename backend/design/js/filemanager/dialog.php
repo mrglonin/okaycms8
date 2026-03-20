@@ -10,6 +10,7 @@ session_start();
 chdir('../../../..');
 
 require_once('vendor/autoload.php');
+require_once('Okay/Core/compat/vendor_compat.php');
 
 $DI = include 'Okay/Core/config/container.php';
 

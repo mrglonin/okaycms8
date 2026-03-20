@@ -142,7 +142,29 @@ class Phone
             $numberFormat = $settings->get('phone_default_format');
         }
 
+        $numberFormat = self::normalizeFormat($numberFormat);
+
         $phoneObject = $phoneUtil->parse($phoneNumber, $defaultRegion);
         return $phoneUtil->format($phoneObject, $numberFormat);
+    }
+
+    private static function normalizeFormat($numberFormat): PhoneNumberFormat
+    {
+        if ($numberFormat instanceof PhoneNumberFormat) {
+            return $numberFormat;
+        }
+
+        if (is_numeric($numberFormat)) {
+            return PhoneNumberFormat::from((int) $numberFormat);
+        }
+
+        if (is_string($numberFormat)) {
+            $enumName = strtoupper($numberFormat);
+            if (defined(PhoneNumberFormat::class . '::' . $enumName)) {
+                return constant(PhoneNumberFormat::class . '::' . $enumName);
+            }
+        }
+
+        return PhoneNumberFormat::INTERNATIONAL;
     }
 }

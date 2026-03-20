@@ -111,6 +111,15 @@ abstract class AbstractQuery implements QueryInterface
         return $this->queryObject->getBindValues();
     }
 
+    public function resetFlags()
+    {
+        if (method_exists($this->queryObject, 'resetFlags')) {
+            $this->queryObject->resetFlags();
+        }
+
+        return $this;
+    }
+
     public function getStatement()
     {
         return $this->queryObject->getStatement();

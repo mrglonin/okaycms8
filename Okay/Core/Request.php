@@ -224,7 +224,11 @@ class Request
         }
         
         if ($type == 'string') {
-            return strval(preg_replace('/[^\p{L}\p{Nd}\d\s_\-.%]/ui', '', $val));
+            if ($val === null) {
+                return '';
+            }
+
+            return strval(preg_replace('/[^\p{L}\p{Nd}\d\s_\-.%]/ui', '', (string) $val));
         }
         
         if ($type == 'integer' || $type == 'int') {
@@ -276,7 +280,11 @@ class Request
         }
 
         if ($type == 'string') {
-            return strval(preg_replace('/[^\p{L}\p{Nd}\d\s_\-.%]/ui', '', $val));
+            if ($val === null) {
+                return '';
+            }
+
+            return strval(preg_replace('/[^\p{L}\p{Nd}\d\s_\-.%]/ui', '', (string) $val));
         }
         
         if ($type == 'integer' || $type == 'int') {

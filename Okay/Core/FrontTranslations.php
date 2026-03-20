@@ -9,7 +9,9 @@ use Okay\Entities\TranslationsEntity;
 
 class FrontTranslations
 {
-    
+    /** @var array<string, string> */
+    private $translations = [];
+
     private $_debugTranslation;
     private $_entityFactory;
     private $_languages;
@@ -32,12 +34,21 @@ class FrontTranslations
         /** @var TranslationsEntity $translations */
         $translations = $this->_entityFactory->get(TranslationsEntity::class);
         foreach ($translations->find(['lang' => $langLabel]) as $var => $translation) {
-            $this->$var = $translation->value;
+            $this->setTranslation($var, $translation->value);
         }
     }
     
     public function __get($var)
     {
+        $var = $this->normalizeTranslationKey($var);
+        if ($var === '') {
+            return null;
+        }
+
+        if (array_key_exists($var, $this->translations)) {
+            return $this->translations[$var];
+        }
+
         // Если не нашли перевода на текущем языке, посмотрим может есть этот перевод на основном языке или уже на английском
         /** @var TranslationsEntity $translations */
         $translations = $this->_entityFactory->get(TranslationsEntity::class);
@@ -50,7 +61,7 @@ class FrontTranslations
                 $translation = $res->lang_en->value;
             }
 
-            $this->$var = $translation;
+            $this->setTranslation($var, $translation);
 
             // Если включили дебаг переводов, выведим соответствующее сообщение на неизвестный перевод
             if ($this->_debugTranslation === true) {
@@ -60,16 +71,43 @@ class FrontTranslations
         } elseif ($this->_debugTranslation === true) {
             return '<b style="color: red!important;">$lang->' . $var . ' not exists</b>';
         }
+
+        return null;
+    }
+
+    public function __set($var, $translation)
+    {
+        $this->setTranslation($var, $translation);
+    }
+
+    public function __isset($var)
+    {
+        $var = $this->normalizeTranslationKey($var);
+        return $var !== '' && array_key_exists($var, $this->translations);
     }
     
     public function getTranslation($var)
     {
-        return $this->$var;
+        return $this->__get($var);
     }
     
     public function addTranslation($var, $translation)
     {
-        $var = preg_replace('~[^\w]~', '', $var);
-        $this->$var = $translation;
+        $this->setTranslation($var, $translation);
+    }
+
+    private function setTranslation($var, $translation): void
+    {
+        $var = $this->normalizeTranslationKey($var);
+        if ($var === '') {
+            return;
+        }
+
+        $this->translations[$var] = $translation;
+    }
+
+    private function normalizeTranslationKey($var): string
+    {
+        return preg_replace('~[^\w]~', '', (string) $var) ?: '';
     }
 }

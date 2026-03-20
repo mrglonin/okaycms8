@@ -183,7 +183,10 @@ class FeaturesValuesEntity extends Entity
                 "feature_id_features_subquery_{$featureId}" => $featureId,
             ]);
             
-            $this->select->where("(fv.feature_id =:feature_id_{$featureId} OR p.id IN (?))", $subQuery);
+            $this->select->where(
+                "(fv.feature_id =:feature_id_{$featureId} OR p.id IN (" . $subQuery->getStatement() . '))'
+            );
+            $this->select->bindValues($subQuery->getBindValues());
             $this->select->bindValue("feature_id_{$featureId}", $featureId);
         }
     }

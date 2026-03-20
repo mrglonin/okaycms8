@@ -327,11 +327,8 @@ class LicenseModulesTemplates
 
         $result = curl_exec($ch);
         if (curl_errno($ch)) {
-            curl_close($ch);
             return false;
         }
-
-        curl_close($ch);
 
         $result = json_decode($result);
         if (json_last_error() === JSON_ERROR_NONE) {

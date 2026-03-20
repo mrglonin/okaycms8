@@ -5,11 +5,10 @@ namespace Okay\Core\QueryFactory;
 
 
 use Aura\SqlQuery\Common\SelectInterface;
-use Aura\SqlQuery\Common\SubselectInterface;
 use Aura\SqlQuery\QueryInterface;
 use Aura\SqlQuery\Common\Select as AuraSelect;
 
-class Select extends AbstractQuery implements SelectInterface, SubselectInterface
+class Select extends AbstractQuery implements SelectInterface
 {
     /**
      * @var QueryInterface|AuraSelect
@@ -39,6 +38,11 @@ class Select extends AbstractQuery implements SelectInterface, SubselectInterfac
         return $this;
     }
 
+    public function isDistinct()
+    {
+        return $this->queryObject->isDistinct();
+    }
+
     public function cols(array $cols)
     {
         $this->queryObject->cols($cols);
@@ -47,8 +51,12 @@ class Select extends AbstractQuery implements SelectInterface, SubselectInterfac
 
     public function removeCol($alias)
     {
-        $this->queryObject->removeCol($alias);
-        return $this;
+        return $this->queryObject->removeCol($alias);
+    }
+
+    public function hasCol($alias)
+    {
+        return $this->queryObject->hasCol($alias);
     }
 
     public function hasCols()
@@ -109,15 +117,25 @@ class Select extends AbstractQuery implements SelectInterface, SubselectInterfac
         return $this;
     }
 
-    public function having($cond)
+    public function having($cond, $bind = [])
     {
-        $this->queryObject->having($cond);
+        $args = func_get_args();
+        if (count($args) > 2) {
+            $bind = array_slice($args, 1);
+        }
+
+        $this->queryObject->having($cond, $bind);
         return $this;
     }
 
-    public function orHaving($cond)
+    public function orHaving($cond, $bind = [])
     {
-        $this->queryObject->orHaving($cond);
+        $args = func_get_args();
+        if (count($args) > 2) {
+            $bind = array_slice($args, 1);
+        }
+
+        $this->queryObject->orHaving($cond, $bind);
         return $this;
     }
 
@@ -141,6 +159,12 @@ class Select extends AbstractQuery implements SelectInterface, SubselectInterfac
     public function unionAll()
     {
         $this->queryObject->unionAll();
+        return $this;
+    }
+
+    public function reset()
+    {
+        $this->queryObject->reset();
         return $this;
     }
 
@@ -196,15 +220,25 @@ class Select extends AbstractQuery implements SelectInterface, SubselectInterfac
         return $this;
     }
 
-    public function where($cond, ...$binds)
+    public function where($cond, $bind = [])
     {
-        $this->queryObject->where(...func_get_args());
+        $args = func_get_args();
+        if (count($args) > 2) {
+            $bind = array_slice($args, 1);
+        }
+
+        $this->queryObject->where($cond, $bind);
         return $this;
     }
 
-    public function orWhere($cond)
+    public function orWhere($cond, $bind = [])
     {
-        $this->queryObject->orWhere(...func_get_args());
+        $args = func_get_args();
+        if (count($args) > 2) {
+            $bind = array_slice($args, 1);
+        }
+
+        $this->queryObject->orWhere($cond, $bind);
         return $this;
     }
 

@@ -86,7 +86,7 @@ class CategoriesHelper
         return ExtenderFacade::execute(__METHOD__, $this->filterHelper->isFilterPage($filter), func_get_args());
     }
 
-    public function getProductsFilter(object $category, string $filtersUrl = null, array $filter = []): ?array
+    public function getProductsFilter(object $category, ?string $filtersUrl = null, array $filter = []): ?array
     {
         if (($filter = $this->catalogHelper->getProductsFilter($filtersUrl, $filter)) === null) {
             return ExtenderFacade::execute(__METHOD__, null, func_get_args());

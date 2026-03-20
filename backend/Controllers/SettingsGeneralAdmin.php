@@ -5,6 +5,7 @@ namespace Okay\Admin\Controllers;
 
 
 use Giggsey\Locale\Locale;
+use libphonenumber\PhoneNumberFormat;
 use libphonenumber\PhoneNumberUtil;
 use Okay\Admin\Helpers\BackendSettingsHelper;
 use Okay\Core\BackendTranslations;
@@ -24,10 +25,10 @@ class SettingsGeneralAdmin extends IndexAdmin
         
         // Передаем название стран
         switch ($backendTranslations->getLangLabel()) {
-            case 'ua';
+            case 'ua':
                 $countries = Locale::getAllCountriesForLocale('uk');
             break;
-            case 'ru';
+            case 'ru':
                 $countries = Locale::getAllCountriesForLocale('ru');
             break;
             default:
@@ -35,11 +36,30 @@ class SettingsGeneralAdmin extends IndexAdmin
         }
 
         $phoneUtil = PhoneNumberUtil::getInstance();
+        $phoneExample = $phone->getPhoneExample();
 
         // Передаем пример номера телефона для указанной страны
-        $this->design->assign('phone_example', $phone->getPhoneExample());
+        $this->design->assign('phone_example', $phoneExample);
         $this->design->assign('phone_regions', $phoneUtil->getSupportedRegions());
         $this->design->assign('phone_regions_names', $countries);
+        $this->design->assign('phone_formats', [
+            [
+                'value' => PhoneNumberFormat::E164->value,
+                'label' => $phone->format($phoneExample, PhoneNumberFormat::E164),
+            ],
+            [
+                'value' => PhoneNumberFormat::INTERNATIONAL->value,
+                'label' => $phone->format($phoneExample, PhoneNumberFormat::INTERNATIONAL),
+            ],
+            [
+                'value' => PhoneNumberFormat::NATIONAL->value,
+                'label' => $phone->format($phoneExample, PhoneNumberFormat::NATIONAL),
+            ],
+            [
+                'value' => PhoneNumberFormat::RFC3966->value,
+                'label' => $phone->format($phoneExample, PhoneNumberFormat::RFC3966),
+            ],
+        ]);
         
         $this->response->setContent($this->design->fetch('settings_general.tpl'));
     }

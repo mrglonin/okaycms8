@@ -175,14 +175,13 @@ class Design
         if ($smartyForceCompile) {
             $smarty->setForceCompile(true);
         }
-        
+
         $this->smarty->registerFilter('pre', [$this, 'applyTplModifiers']);
     }
     
     public function applyTplModifiers($content, $s)
     {
-        
-        $currentFile = $s->_current_file;
+        $currentFile = (string) ($s->_current_file ?? '');
         
         // Определяем модификации чего сейчас нам нужны, фронта или бека
         if (strpos($currentFile, $this->rootDir.'backend'.DIRECTORY_SEPARATOR.'design'.DIRECTORY_SEPARATOR.'html') !== false) {
@@ -204,6 +203,23 @@ class Design
         }
         
         return $content;
+    }
+
+    private function registerLegacyPhpModifiers(array $reservedTags = []): void
+    {
+        foreach ($this->allowedPhpFunctions as $functionName) {
+            if (!is_string($functionName) || !is_callable($functionName)) {
+                continue;
+            }
+
+            if (isset($reservedTags[$functionName])) {
+                continue;
+            }
+
+            if ($this->smarty->getRegisteredPlugin(Smarty::PLUGIN_MODIFIER, $functionName) === null) {
+                $this->smarty->registerPlugin(Smarty::PLUGIN_MODIFIER, $functionName, $functionName);
+            }
+        }
     }
 
     /**
@@ -351,6 +367,8 @@ class Design
     
     private function registerSmartyPlugins()
     {
+        $this->registerLegacyPhpModifiers($this->smartyModifiers);
+
         foreach ($this->smartyModifiers as $tag => $callback) {
             $this->smarty->registerPlugin('modifier', $tag, $callback);
             unset($this->smartyModifiers[$tag]);

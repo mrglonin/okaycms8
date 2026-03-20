@@ -8,6 +8,7 @@ use Okay\Modules\OkayCMS\AutoDeploy\Helpers\DeployHelper;
 chdir(dirname(__DIR__, 5));
 
 require_once('vendor/autoload.php');
+require_once('Okay/Core/compat/vendor_compat.php');
 
 /** @var OkayContainer $DI */
 $DI = require 'Okay/Core/config/container.php';
